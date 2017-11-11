@@ -5,12 +5,17 @@ const Path = require('path');
 const rread = require('readdir-recursive');
 const xml = require('xml');
 const argv = require('minimist')(process.argv.slice(2));
+const shell = require('shelljs');
 
-const files = rread.fileSync(argv.folder).map(file => ({
+const folder = argv.folder;
+
+const toWindowsPath = path => path.replace(/\//, '\\');
+
+const files = rread.fileSync(folder).map(file => ({
     File: [{
         _attr: {
-            Path: file,
-            Url: file,
+            Path: file.substring(folder.length + 1),
+            Url: toWindowsPath(file.substring(folder.length + 1)),
             ReplaceContent: 'TRUE',
         },
     }],
@@ -33,7 +38,6 @@ const elements = [{
     ]
 }];
 
-const result = xml(files, { declaration: true, indent: '\t' });
-const elementsXml = xml(elements, { declaration: true, indent: '\t' });
+const result = xml(elements, { declaration: true, indent: '\t' });
 
-console.log(elementsXml);
+shell.ShellString(result).to('Elements.xml');
