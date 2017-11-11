@@ -7,15 +7,13 @@ const xml = require('xml');
 const argv = require('minimist')(process.argv.slice(2));
 const shell = require('shelljs');
 
-const folder = argv.folder;
+const toWindowsPath = path => path.replace(/\//g, '\\');
 
-const toWindowsPath = path => path.replace(/\//, '\\');
-
-const files = rread.fileSync(folder).map(file => ({
+const files = rread.fileSync(argv.folder).map(file => ({
     File: [{
         _attr: {
-            Path: file.substring(folder.length + 1),
-            Url: toWindowsPath(file.substring(folder.length + 1)),
+            Path: `${argv.module}\\${toWindowsPath(file)}`,
+            Url: `${argv.module}/${file}`,
             ReplaceContent: 'TRUE',
         },
     }],
@@ -40,4 +38,4 @@ const elements = [{
 
 const result = xml(elements, { declaration: true, indent: '\t' });
 
-shell.ShellString(result).to('Elements.xml');
+shell.ShellString(result).to(argv.folder + '/Elements.xml');
