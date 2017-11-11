@@ -1,0 +1,29 @@
+{
+  "name": "sp-elements-xml",
+  "version": "0.1.0",
+  "description": "Generates an Elements.xml file for use in SharePoint add-ins.",
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lambrossy/sp-elements-xml.git"
+  },
+  "keywords": [
+    "SharePoint"
+  ],
+  "author": "Lambros Symeonakis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lambrossy/sp-elements-xml/issues"
+  },
+  "homepage": "https://github.com/lambrossy/sp-elements-xml#readme",
+  "bin": {
+    "sp-elements-xml": "index.js"
+  },
+  "dependencies": {
+    "minimist": "^1.2.0",
+    "readdir-recursive": "0.0.4",
+    "xml": "^1.0.1"
+  }
+}
