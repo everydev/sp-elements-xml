@@ -7,7 +7,9 @@ const xml = require('xml');
 const argv = require('minimist')(process.argv.slice(2));
 const shell = require('shelljs');
 
-const toWindowsPathOnly = path => path.split('/').slice(0, -1).join('\\');
+const getFileOnly = path => path.split('/').slice(-1);
+const getPathOnly = path => path.split('/').slice(0, -1).join('/') + '/';
+const dropTopFolder = path => path.split('/').length ? path.split('/').slice(1).join('/') : path;
 const toWindowsPath = path => path.replace(/\//g, '\\');
 
 let files, elements, result;
@@ -19,8 +21,8 @@ let files, elements, result;
 files = rread.fileSync(argv.folder).map(file => ({
     File: [{
         _attr: {
-            Path: `${argv.module}\\${toWindowsPath(file)}`,
-            Url: `${argv.module}/${file}`,
+            Path: `${argv.module}\\${toWindowsPath(dropTopFolder(file))}`,
+            Url: `${argv.module}/${dropTopFolder(file)}`,
             ReplaceContent: 'TRUE',
         },
     }],
@@ -45,7 +47,7 @@ elements = [{
 
 result = xml(elements, { declaration: true, indent: '\t' });
 
-shell.ShellString(result).to(argv.folder + '/..' + '/Elements.xml');
+shell.ShellString(result).to(argv.folder + '/Elements.xml');
 
 //////////////////////////////////
 // SharePointProjectItem.spdata //
@@ -54,8 +56,8 @@ shell.ShellString(result).to(argv.folder + '/..' + '/Elements.xml');
 files = rread.fileSync(argv.folder).map(file => ({
     ProjectItemFile: [{
         _attr: {
-            Source: `${toWindowsPath(file)}`,
-            Target: `${argv.module}\\${toWindowsPathOnly(file)}`,
+            Source: toWindowsPath(dropTopFolder(file)),
+            Target: `${argv.module}\\${toWindowsPath(dropTopFolder(getPathOnly(file)))}`,
             Type: file === 'Elements.xml' ? 'ElementManifest' : 'ElementFile',
         },
     }],
@@ -80,4 +82,4 @@ elements = [{
 
 result = xml(elements, { declaration: true, indent: '\t' });
 
-shell.ShellString(result).to(argv.folder + '/..' + '/SharePointProjectItem.spdata');
+shell.ShellString(result).to(argv.folder + '/SharePointProjectItem.spdata');
