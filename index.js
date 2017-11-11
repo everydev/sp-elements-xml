@@ -7,9 +7,16 @@ const xml = require('xml');
 const argv = require('minimist')(process.argv.slice(2));
 const shell = require('shelljs');
 
+const toWindowsPathOnly = path => path.split('/').slice(0, -1).join('\\');
 const toWindowsPath = path => path.replace(/\//g, '\\');
 
-const files = rread.fileSync(argv.folder).map(file => ({
+let files, elements, result;
+
+//////////////////
+// Elements.xml //
+//////////////////
+
+files = rread.fileSync(argv.folder).map(file => ({
     File: [{
         _attr: {
             Path: `${argv.module}\\${toWindowsPath(file)}`,
@@ -19,7 +26,7 @@ const files = rread.fileSync(argv.folder).map(file => ({
     }],
 }));
 
-const elements = [{
+elements = [{
     Elements: [
         {
             _attr: {
@@ -36,6 +43,41 @@ const elements = [{
     ]
 }];
 
-const result = xml(elements, { declaration: true, indent: '\t' });
+result = xml(elements, { declaration: true, indent: '\t' });
 
 shell.ShellString(result).to(argv.folder + '/Elements.xml');
+
+//////////////////////////////////
+// SharePointProjectItem.spdata //
+//////////////////////////////////
+
+files = rread.fileSync(argv.folder).map(file => ({
+    ProjectItemFile: [{
+        _attr: {
+            Source: `${toWindowsPath(file)}`,
+            Target: `${argv.module}\\${toWindowsPathOnly(file)}`,
+            Type: file === 'Elements.xml' ? 'ElementManifest' : 'ElementFile',
+        },
+    }],
+}));
+
+elements = [{
+    ProjectItem: [
+        {
+            _attr: {
+                xmlns: 'http://schemas.microsoft.com/VisualStudio/2010/SharePointTools/SharePointProjectItemModel',
+                DefaultFile: 'Elements.xml',
+                SupportedTrustLevels: 'All',
+                SupportedDeploymentScopes: 'Web, Site',
+                Type: 'Microsoft.VisualStudio.SharePoint.Module',
+            }
+        },
+        {
+            Files: files,
+        }
+    ]
+}];
+
+result = xml(elements, { declaration: true, indent: '\t' });
+
+shell.ShellString(result).to(argv.folder + '/SharePointProjectItem.spdata');
