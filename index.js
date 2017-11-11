@@ -46,7 +46,7 @@ elements = [{
     ]
 }];
 
-result = xml(elements, { declaration: true, indent: '\t' });
+result = xml(elements, { declaration: true });
 
 shell.ShellString(result).to(argv.folder + '/Elements.xml');
 
@@ -81,6 +81,6 @@ elements = [{
     ]
 }];
 
-result = xml(elements, { declaration: true, indent: '\t' });
+result = xml(elements, { declaration: true });
 
 shell.ShellString(result).to(argv.folder + '/SharePointProjectItem.spdata');
