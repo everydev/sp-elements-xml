@@ -7,10 +7,11 @@ const xml = require('xml');
 const argv = require('minimist')(process.argv.slice(2));
 const shell = require('shelljs');
 
-const getFileOnly = path => path.split('/').slice(-1);
-const getPathOnly = path => path.split('/').slice(0, -1).join('/') + '/';
-const dropTopFolder = path => path.split('/').length ? path.split('/').slice(1).join('/') : path;
-const toWindowsPath = path => path.replace(/\//g, '\\');
+const getFileOnly = path => toNormalPath(path).split('/').slice(-1);
+const getPathOnly = path => toNormalPath(path).split('/').slice(0, -1).join('/') + '/';
+const dropTopFolder = path => toNormalPath(path).split('/').length ? toNormalPath(path).split('/').slice(1).join('/') : toNormalPath(path);
+const toWindowsPath = path => toNormalPath(path).replace(/\//g, '\\');
+const toNormalPath = path => path.replace(/\\/g, '/');
 
 let files, elements, result;
 
