@@ -59,7 +59,7 @@ files = rread.fileSync(argv.folder).map(file => ({
         _attr: {
             Source: toWindowsPath(dropTopFolder(file)),
             Target: `${argv.module}\\${toWindowsPath(dropTopFolder(getPathOnly(file)))}`,
-            Type: file === 'Elements.xml' ? 'ElementManifest' : 'ElementFile',
+            Type: getPathOnly(file) === 'Elements.xml' ? 'ElementManifest' : 'ElementFile',
         },
     }],
 }));
