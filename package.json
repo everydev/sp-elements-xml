@@ -1,6 +1,6 @@
 {
   "name": "sp-elements-xml",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Generates an Elements.xml file for use in SharePoint add-ins.",
   "scripts": {
     "test": "mocha --reporter spec"
